@@ -164,7 +164,7 @@ btnLogin.addEventListener('click', function (e) {
   );
   console.log(currentAccount);
 
-  if (currentAccount?.pin === Number(inputLoginPin.value)) {
+  if (currentAccount?.pin === +inputLoginPin.value) {
     // Display UI and message
     labelWelcome.textContent = `Welcome back, ${
       currentAccount.owner.split(' ')[0]
@@ -182,7 +182,7 @@ btnLogin.addEventListener('click', function (e) {
 
 btnTransfer.addEventListener('click', function (e) {
   e.preventDefault();
-  const amount = Number(inputTransferAmount.value);
+  const amount = +inputTransferAmount.value;
   const receiverAcc = accounts.find(
     acc => acc.username === inputTransferTo.value,
   );
@@ -206,7 +206,7 @@ btnTransfer.addEventListener('click', function (e) {
 btnLoan.addEventListener('click', function (e) {
   e.preventDefault();
 
-  const amount = Number(inputLoanAmount.value);
+  const amount = +inputLoanAmount.value;
 
   if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
     // Add movement
@@ -223,7 +223,7 @@ btnClose.addEventListener('click', function (e) {
 
   if (
     inputCloseUsername.value === currentAccount.username &&
-    Number(inputClosePin.value) === currentAccount.pin
+    +inputClosePin.value === currentAccount.pin
   ) {
     const index = accounts.findIndex(
       acc => acc.username === currentAccount.username,
@@ -254,3 +254,53 @@ btnSort.addEventListener('click', function (e) {
 
 console.log(20 === 20.0);
 console.log(0.1 + 0.2);
+
+console.log(Number('23'));
+//Easier way
+console.log(+'23');
+//Parsing :
+//Parse int : to work the string need to start with a number
+console.log(Number.parseInt('30px', 10)); //With number from 0-9 we use 10 , with binary numbers we use 2
+
+//Parse int accept a second argument wich is called regex : base of the numeral system that we are using . In this case : 10
+
+//ParseFloat
+console.log(Number.parseFloat('2.5rem')); //We get 2.5
+console.log(Number.parseInt('2.5rem')); //We get only 2
+
+//Is nan try to see if the argument is a number or not
+console.log(Number.isNaN(+'2x')); // not a number because 2x is the number we created with +
+console.log(Number.isNaN(23 / 0));
+
+//Is finite ( best way to check if a value is a number)
+console.log(Number.isFinite('20'));
+console.log(Number.isFinite(20));
+console.log(Number.isFinite(+'2x'));
+
+// is integer
+console.log(Number.isFinite(+'2x'));
+
+//Math and rounding
+
+//Sqrt radice
+console.log(Math.sqrt(25));
+
+//Cubic radice
+console.log(25 ** 1 / 3);
+
+//Math max and min
+console.log(Math.max(5, 19, 290, 3));
+console.log(Math.min(5, 19, 290, 3));
+
+//Math pi is pigreco
+console.log(Math.PI * Number.parseFloat('10px') ** 2);
+
+console.log(Math.trunc(Math.random() * 6));
+
+//Get random numbers based on range
+const randomInt = (min, max) =>
+  //First we set dinamically min and max and then we add the minimum value .
+  Math.floor(Math.random() * (max - min + 1)) + min;
+
+console.log(randomInt(10, 20));
+console.log(randomInt(0, 3));
