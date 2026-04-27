@@ -343,13 +343,74 @@ labelBalance.addEventListener('click', function () {
   });
 });
 
-//287,460,000,000
+//287,460,000,000 We can put underscores to make the number clear
 const diameter = 287_460_000_000;
 //Engine ingnores the underscores
 console.log(diameter);
 
-//Only put the underscore between numbers
+//Only put the underscore between two numbers!!
 const priceCents = 345_99;
 
-console.log(Number('239_00'));
-console.log(parseInt('239_00'));
+console.log(Number('239_00')); //I can't do this
+console.log(parseInt('239_00')); //this ok
+
+//Larger safe number
+console.log(2 ** 53 - 1);
+console.log(Number.MAX_SAFE_INTEGER);
+
+//beyond the larger safe num the result are unpredictable and not always correct
+console.log(2 ** 53 + 1);
+
+//Es 2020 : BigINT , two ways of creating it
+console.log(22378623894328742323423423489n);
+console.log(BigInt(22378623894328742323423423489)); //BETTER FOR SMALLER NUMBERS
+//These two are not equal because first js needs to interpretate the number and then appling the function bigint
+
+//Math operations doesent work
+// console.log(Math.sqrt(BigInt(482347823947382723987483289432)));
+//Operations
+console.log(10000n + 10000n);
+
+const huge = 23823874238972834789237428n;
+const num = 23;
+console.log(huge * BigInt(num)); //Can't convert big ints to number , we need to convert it
+
+//Exceptions
+console.log(20n > 15);
+console.log(20n === 20); //False
+console.log(typeof 20n);
+console.log(20n == 20); //True
+console.log(20n == '20'); //True
+
+console.log(huge + ' is really big');
+
+//DIvisions
+console.log(11n / 3n); //With divisions it cut off decimal part
+
+//Dates and Times
+//Create a date
+
+//1)
+// const now = new Date();
+// console.log(now);
+
+// //2) Parse a string
+// console.log(new Date('Mon Apr 27 2026 12:33:19'));
+// console.log(new Date('December 24 , 2015'));
+
+// console.log(new Date(account1.movementsDates[0]));
+// console.log(new Date(2037, 10 + 1, 19, 15, 23, 5));
+
+// //3 giorni dopo , 24 ore , 60 min , 60s in millisecondi
+// console.log(new Date(3 * 24 * 60 * 60 * 1000));
+
+//Working with dates
+const future = new Date(2037, 10 + 1, 19, 15, 23);
+console.log(future);
+console.log(future.getFullYear());
+console.log(future.getMonth());
+console.log(future.getDate());
+console.log(future.getDay());
+console.log(future.getHours());
+console.log(future.getMinutes());
+console.log(future.toISOString());
