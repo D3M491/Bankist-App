@@ -81,20 +81,32 @@ const inputClosePin = document.querySelector('.form__input--pin');
 /////////////////////////////////////////////////
 // Functions
 
-const displayMovements = function (movements, sort = false) {
+const displayMovements = function (acc, sort = false) {
   containerMovements.innerHTML = '';
 
-  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
+  const movs = sort
+    ? acc.movements.slice().sort((a, b) => a - b)
+    : acc.movements;
 
   movs.forEach(function (mov, i) {
     const type = mov > 0 ? 'deposit' : 'withdrawal';
+    const date = new Date(acc.movementsDates[i]);
+    const day = `${date.getDate()}`.padStart(2, 0);
+    const month = `${date.getMonth() + 1}`.padStart(2, 0);
+    const year = date.getFullYear();
+
+    const displayDate = `${day}/${month}/${year}`;
 
     const html = `
       <div class="movements__row">
-        <div class="movements__type movements__type--${type}">${
-          i + 1
-        } ${type}</div>
+      
+      <div class="movements__type movements__type--${type}">${
+        i + 1
+      } ${type}</div>
+      
+      <div class="movements__date">${displayDate}</div>
         <div class="movements__value">${mov.toFixed(2)}€</div>
+
       </div>
     `;
 
@@ -129,8 +141,8 @@ const calcDisplaySummary = function (acc) {
   labelSumInterest.textContent = `${interest.toFixed(2)}€`;
 };
 
-const createUsernames = function (accs) {
-  accs.forEach(function (acc) {
+const createUsernames = function (acc) {
+  acc.forEach(function (acc) {
     acc.username = acc.owner
       .toLowerCase()
       .split(' ')
@@ -142,7 +154,7 @@ createUsernames(accounts);
 
 const updateUI = function (acc) {
   // Display movements
-  displayMovements(acc.movements);
+  displayMovements(acc);
 
   // Display balance
   calcDisplayBalance(acc);
@@ -171,6 +183,17 @@ btnLogin.addEventListener('click', function (e) {
     }`;
     containerApp.style.opacity = 100;
 
+    //Create current date and time
+    //We want this format = day , month and year
+    //We need to pad start on a string so we use template literal
+    const day = `${now.getDate()}`.padStart(2, 0);
+    const month = `${now.getMonth() + 1}`.padStart(2, 0);
+    const year = now.getFullYear();
+    const hours = now.getHours();
+    const minutes = `${now.getMinutes()}`.padStart(2, 0);
+
+    labelDate.textContent = `${day}/${month}/${year}, ${hours}:${minutes}`;
+
     // Clear input fields
     inputLoginUsername.value = inputLoginPin.value = '';
     inputLoginPin.blur();
@@ -198,6 +221,10 @@ btnTransfer.addEventListener('click', function (e) {
     currentAccount.movements.push(-amount);
     receiverAcc.movements.push(amount);
 
+    //Add transfer date
+    currentAccount.movementsDates.push(new Date().toISOString());
+    receiverAcc.movementsDates.push(new Date().toISOString());
+
     // Update UI
     updateUI(currentAccount);
   }
@@ -211,6 +238,9 @@ btnLoan.addEventListener('click', function (e) {
   if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
     // Add movement
     currentAccount.movements.push(amount);
+
+    //Add loan date
+    currentAccount.movementsDates.push(new Date().toISOString());
 
     // Update UI
     updateUI(currentAccount);
@@ -244,173 +274,190 @@ btnClose.addEventListener('click', function (e) {
 let sorted = false;
 btnSort.addEventListener('click', function (e) {
   e.preventDefault();
-  displayMovements(currentAccount.movements, !sorted);
+  displayMovements(currentAccount, !sorted);
   sorted = !sorted;
 });
+
+//Fake always login
+currentAccount = account1;
+updateUI(currentAccount);
+containerApp.style.opacity = 1;
+
+const now = new Date();
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
 
-console.log(20 === 20.0);
-console.log(0.1 + 0.2);
+// console.log(20 === 20.0);
+// console.log(0.1 + 0.2);
 
-console.log(Number('23'));
-//Easier way
-console.log(+'23');
-//Parsing :
-//Parse int : to work the string need to start with a number
-console.log(Number.parseInt('30px', 10)); //With number from 0-9 we use 10 , with binary numbers we use 2
+// console.log(Number('23'));
+// //Easier way
+// console.log(+'23');
+// //Parsing :
+// //Parse int : to work the string need to start with a number
+// console.log(Number.parseInt('30px', 10)); //With number from 0-9 we use 10 , with binary numbers we use 2
 
-//Parse int accept a second argument wich is called regex : base of the numeral system that we are using . In this case : 10
+// //Parse int accept a second argument wich is called regex : base of the numeral system that we are using . In this case : 10
 
-//ParseFloat
-console.log(Number.parseFloat('2.5rem')); //We get 2.5
-console.log(Number.parseInt('2.5rem')); //We get only 2
+// //ParseFloat
+// console.log(Number.parseFloat('2.5rem')); //We get 2.5
+// console.log(Number.parseInt('2.5rem')); //We get only 2
 
-//Is nan try to see if the argument is a number or not
-console.log(Number.isNaN(+'2x')); // not a number because 2x is the number we created with +
-console.log(Number.isNaN(23 / 0));
+// //Is nan try to see if the argument is a number or not
+// console.log(Number.isNaN(+'2x')); // not a number because 2x is the number we created with +
+// console.log(Number.isNaN(23 / 0));
 
-//Is finite ( best way to check if a value is a number)
-console.log(Number.isFinite('20'));
-console.log(Number.isFinite(20));
-console.log(Number.isFinite(+'2x'));
+// //Is finite ( best way to check if a value is a number)
+// console.log(Number.isFinite('20'));
+// console.log(Number.isFinite(20));
+// console.log(Number.isFinite(+'2x'));
 
-// is integer
-console.log(Number.isFinite(+'2x'));
+// // is integer
+// console.log(Number.isFinite(+'2x'));
 
-//Math and rounding
+// //Math and rounding
 
-//Sqrt radice
-console.log(Math.sqrt(25));
+// //Sqrt radice
+// console.log(Math.sqrt(25));
 
-//Cubic radice
-console.log(25 ** 1 / 3);
+// //Cubic radice
+// console.log(25 ** 1 / 3);
 
-//Math max and min
-console.log(Math.max(5, 19, 290, 3));
-console.log(Math.min(5, 19, 290, 3));
+// //Math max and min
+// console.log(Math.max(5, 19, 290, 3));
+// console.log(Math.min(5, 19, 290, 3));
 
-//Math pi is pigreco
-console.log(Math.PI * Number.parseFloat('10px') ** 2);
+// //Math pi is pigreco
+// console.log(Math.PI * Number.parseFloat('10px') ** 2);
 
-console.log(Math.trunc(Math.random() * 6));
+// console.log(Math.trunc(Math.random() * 6));
 
-//Get random numbers based on range
-const randomInt = (min, max) =>
-  //First we set dinamically min and max and then we add the minimum value .
-  Math.floor(Math.random() * (max - min + 1)) + min;
+// //Get random numbers based on range
+// const randomInt = (min, max) =>
+//   //First we set dinamically min and max and then we add the minimum value .
+//   Math.floor(Math.random() * (max - min + 1)) + min;
 
-console.log(randomInt(10, 20));
-console.log(randomInt(0, 3));
+// console.log(randomInt(10, 20));
+// console.log(randomInt(0, 3));
 
-//Rounding integers
-console.log(Math.trunc(2.3));
+// //Rounding integers
+// console.log(Math.trunc(2.3));
 
-//Arrotonda all integer
-console.log(Math.round(2.3));
-console.log(Math.round(2.3));
+// //Arrotonda all integer
+// console.log(Math.round(2.3));
+// console.log(Math.round(2.3));
 
-//Ceil round up to the next number
-console.log(Math.ceil(2.3));
+// //Ceil round up to the next number
+// console.log(Math.ceil(2.3));
 
-//Floor round up to the previous number
-console.log(Math.floor(2.3));
+// //Floor round up to the previous number
+// console.log(Math.floor(2.3));
 
-console.log(Math.trunc(-2.3));
-console.log(Math.floor(-2.3)); //Works better with negative numbers
+// console.log(Math.trunc(-2.3));
+// console.log(Math.floor(-2.3)); //Works better with negative numbers
 
-//To fix always return a string . The 0 is the amount of decimal part that we want
-console.log((2.7).toFixed(0));
-console.log((2.7).toFixed(3));
-console.log((2.7556).toFixed(2));
+// //To fix always return a string . The 0 is the amount of decimal part that we want
+// console.log((2.7).toFixed(0));
+// console.log((2.7).toFixed(3));
+// console.log((2.7556).toFixed(2));
 
-//Reminder operator : return the remainder of a division
-console.log(5 % 2); // 5 = 2 +2 +1
-console.log(6 % 2);
+// //Reminder operator : return the remainder of a division
+// console.log(5 % 2); // 5 = 2 +2 +1
+// console.log(6 % 2);
 
-//Check if pari o dispari ( even or odd)
-const isEvenOrOdd = num => num % 2 === 0;
-console.log(isEvenOrOdd(3));
+// //Check if pari o dispari ( even or odd)
+// const isEvenOrOdd = num => num % 2 === 0;
+// console.log(isEvenOrOdd(3));
 
-console.log(5 % 2);
-labelBalance.addEventListener('click', function () {
-  [...document.querySelectorAll('.movements__row')].forEach((row, i) => {
-    //I can tell based on the index when to apply the style
-    if (i % 2 === 0) row.style.backgroundColor = 'orangered';
-    if (i % 3 === 0) row.style.backgroundColor = 'blue';
-  });
-});
+// console.log(5 % 2);
+// labelBalance.addEventListener('click', function () {
+//   [...document.querySelectorAll('.movements__row')].forEach((row, i) => {
+//     //I can tell based on the index when to apply the style
+//     if (i % 2 === 0) row.style.backgroundColor = 'orangered';
+//     if (i % 3 === 0) row.style.backgroundColor = 'blue';
+//   });
+// });
 
-//287,460,000,000 We can put underscores to make the number clear
-const diameter = 287_460_000_000;
-//Engine ingnores the underscores
-console.log(diameter);
+// //287,460,000,000 We can put underscores to make the number clear
+// const diameter = 287_460_000_000;
+// //Engine ingnores the underscores
+// console.log(diameter);
 
-//Only put the underscore between two numbers!!
-const priceCents = 345_99;
+// //Only put the underscore between two numbers!!
+// const priceCents = 345_99;
 
-console.log(Number('239_00')); //I can't do this
-console.log(parseInt('239_00')); //this ok
+// console.log(Number('239_00')); //I can't do this
+// console.log(parseInt('239_00')); //this ok
 
-//Larger safe number
-console.log(2 ** 53 - 1);
-console.log(Number.MAX_SAFE_INTEGER);
+// //Larger safe number
+// console.log(2 ** 53 - 1);
+// console.log(Number.MAX_SAFE_INTEGER);
 
-//beyond the larger safe num the result are unpredictable and not always correct
-console.log(2 ** 53 + 1);
+// //beyond the larger safe num the result are unpredictable and not always correct
+// console.log(2 ** 53 + 1);
 
-//Es 2020 : BigINT , two ways of creating it
-console.log(22378623894328742323423423489n);
-console.log(BigInt(22378623894328742323423423489)); //BETTER FOR SMALLER NUMBERS
-//These two are not equal because first js needs to interpretate the number and then appling the function bigint
+// //Es 2020 : BigINT , two ways of creating it
+// console.log(22378623894328742323423423489n);
+// console.log(BigInt(22378623894328742323423423489)); //BETTER FOR SMALLER NUMBERS
+// //These two are not equal because first js needs to interpretate the number and then appling the function bigint
 
-//Math operations doesent work
-// console.log(Math.sqrt(BigInt(482347823947382723987483289432)));
-//Operations
-console.log(10000n + 10000n);
+// //Math operations doesent work
+// // console.log(Math.sqrt(BigInt(482347823947382723987483289432)));
+// //Operations
+// console.log(10000n + 10000n);
 
-const huge = 23823874238972834789237428n;
-const num = 23;
-console.log(huge * BigInt(num)); //Can't convert big ints to number , we need to convert it
+// const huge = 23823874238972834789237428n;
+// const num = 23;
+// console.log(huge * BigInt(num)); //Can't convert big ints to number , we need to convert it
 
-//Exceptions
-console.log(20n > 15);
-console.log(20n === 20); //False
-console.log(typeof 20n);
-console.log(20n == 20); //True
-console.log(20n == '20'); //True
+// //Exceptions
+// console.log(20n > 15);
+// console.log(20n === 20); //False
+// console.log(typeof 20n);
+// console.log(20n == 20); //True
+// console.log(20n == '20'); //True
 
-console.log(huge + ' is really big');
+// console.log(huge + ' is really big');
 
-//DIvisions
-console.log(11n / 3n); //With divisions it cut off decimal part
+// //DIvisions
+// console.log(11n / 3n); //With divisions it cut off decimal part
 
-//Dates and Times
-//Create a date
+// //Dates and Times
+// //Create a date
 
-//1)
-// const now = new Date();
-// console.log(now);
+// //1)
+// // const now = new Date();
+// // console.log(now);
 
-// //2) Parse a string
-// console.log(new Date('Mon Apr 27 2026 12:33:19'));
-// console.log(new Date('December 24 , 2015'));
+// // //2) Parse a string
+// // console.log(new Date('Mon Apr 27 2026 12:33:19'));
+// // console.log(new Date('December 24 , 2015'));
 
-// console.log(new Date(account1.movementsDates[0]));
-// console.log(new Date(2037, 10 + 1, 19, 15, 23, 5));
+// // console.log(new Date(account1.movementsDates[0]));
+// // console.log(new Date(2037, 10 + 1, 19, 15, 23, 5));
 
-// //3 giorni dopo , 24 ore , 60 min , 60s in millisecondi
-// console.log(new Date(3 * 24 * 60 * 60 * 1000));
+// // //3 giorni dopo , 24 ore , 60 min , 60s in millisecondi
+// // console.log(new Date(3 * 24 * 60 * 60 * 1000));
 
-//Working with dates
-const future = new Date(2037, 10 + 1, 19, 15, 23);
-console.log(future);
-console.log(future.getFullYear());
-console.log(future.getMonth());
-console.log(future.getDate());
-console.log(future.getDay());
-console.log(future.getHours());
-console.log(future.getMinutes());
-console.log(future.toISOString());
+// //Working with dates
+// const future = new Date(2037, 10 + 1, 19, 15, 23);
+// console.log(future);
+// console.log(future.getFullYear());
+// console.log(future.getMonth());
+// console.log(future.getDate());
+// console.log(future.getDay());
+// console.log(future.getHours());
+// console.log(future.getMinutes());
+// //Convert a date and save him into a string
+// console.log(future.toISOString());
+
+// console.log(future.getTime());
+// console.log(new Date(2144845380000));
+
+// console.log(Date.now());
+
+// //Sets
+// future.setFullYear(2040);
+// console.log(future);
