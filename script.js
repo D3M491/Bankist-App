@@ -94,7 +94,7 @@ const displayMovements = function (movements, sort = false) {
         <div class="movements__type movements__type--${type}">${
           i + 1
         } ${type}</div>
-        <div class="movements__value">${mov}€</div>
+        <div class="movements__value">${mov.toFixed(2)}€</div>
       </div>
     `;
 
@@ -104,19 +104,19 @@ const displayMovements = function (movements, sort = false) {
 
 const calcDisplayBalance = function (acc) {
   acc.balance = acc.movements.reduce((acc, mov) => acc + mov, 0);
-  labelBalance.textContent = `${acc.balance}€`;
+  labelBalance.textContent = `${acc.balance.toFixed(2)}€`;
 };
 
 const calcDisplaySummary = function (acc) {
   const incomes = acc.movements
     .filter(mov => mov > 0)
     .reduce((acc, mov) => acc + mov, 0);
-  labelSumIn.textContent = `${incomes}€`;
+  labelSumIn.textContent = `${incomes.toFixed(2)}€`;
 
   const out = acc.movements
     .filter(mov => mov < 0)
     .reduce((acc, mov) => acc + mov, 0);
-  labelSumOut.textContent = `${Math.abs(out)}€`;
+  labelSumOut.textContent = `${Math.abs(out.toFixed(2))}€`;
 
   const interest = acc.movements
     .filter(mov => mov > 0)
@@ -126,7 +126,7 @@ const calcDisplaySummary = function (acc) {
       return int >= 1;
     })
     .reduce((acc, int) => acc + int, 0);
-  labelSumInterest.textContent = `${interest}€`;
+  labelSumInterest.textContent = `${interest.toFixed(2)}€`;
 };
 
 const createUsernames = function (accs) {
@@ -162,7 +162,7 @@ btnLogin.addEventListener('click', function (e) {
   currentAccount = accounts.find(
     acc => acc.username === inputLoginUsername.value,
   );
-  console.log(currentAccount);
+  // console.log(currentAccount);
 
   if (currentAccount?.pin === +inputLoginPin.value) {
     // Display UI and message
@@ -206,7 +206,7 @@ btnTransfer.addEventListener('click', function (e) {
 btnLoan.addEventListener('click', function (e) {
   e.preventDefault();
 
-  const amount = +inputLoanAmount.value;
+  const amount = Math.round(inputLoanAmount.value);
 
   if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
     // Add movement
@@ -304,3 +304,52 @@ const randomInt = (min, max) =>
 
 console.log(randomInt(10, 20));
 console.log(randomInt(0, 3));
+
+//Rounding integers
+console.log(Math.trunc(2.3));
+
+//Arrotonda all integer
+console.log(Math.round(2.3));
+console.log(Math.round(2.3));
+
+//Ceil round up to the next number
+console.log(Math.ceil(2.3));
+
+//Floor round up to the previous number
+console.log(Math.floor(2.3));
+
+console.log(Math.trunc(-2.3));
+console.log(Math.floor(-2.3)); //Works better with negative numbers
+
+//To fix always return a string . The 0 is the amount of decimal part that we want
+console.log((2.7).toFixed(0));
+console.log((2.7).toFixed(3));
+console.log((2.7556).toFixed(2));
+
+//Reminder operator : return the remainder of a division
+console.log(5 % 2); // 5 = 2 +2 +1
+console.log(6 % 2);
+
+//Check if pari o dispari ( even or odd)
+const isEvenOrOdd = num => num % 2 === 0;
+console.log(isEvenOrOdd(3));
+
+console.log(5 % 2);
+labelBalance.addEventListener('click', function () {
+  [...document.querySelectorAll('.movements__row')].forEach((row, i) => {
+    //I can tell based on the index when to apply the style
+    if (i % 2 === 0) row.style.backgroundColor = 'orangered';
+    if (i % 3 === 0) row.style.backgroundColor = 'blue';
+  });
+});
+
+//287,460,000,000
+const diameter = 287_460_000_000;
+//Engine ingnores the underscores
+console.log(diameter);
+
+//Only put the underscore between numbers
+const priceCents = 345_99;
+
+console.log(Number('239_00'));
+console.log(parseInt('239_00'));
