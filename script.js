@@ -239,7 +239,7 @@ btnLoan.addEventListener('click', function (e) {
     // Add movement
     currentAccount.movements.push(amount);
 
-    //Add loan date
+    //Add loan date . We use to iso because its the same format as movementDates
     currentAccount.movementsDates.push(new Date().toISOString());
 
     // Update UI
