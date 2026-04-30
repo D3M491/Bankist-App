@@ -81,21 +81,46 @@ const inputClosePin = document.querySelector('.form__input--pin');
 /////////////////////////////////////////////////
 // Functions
 
+const formatMovementDate = function (date) {
+  const daysPAssed = (date1, date2) =>
+    Math.abs((date2 - date1) / (1000 * 60 * 60 * 24));
+
+  const dayPassed = daysPAssed(new Date(), date);
+  console.log(dayPassed);
+  const day = `${date.getDate()}`.padStart(2, 0);
+  const month = `${date.getMonth() + 1}`.padStart(2, 0);
+  const year = date.getFullYear();
+
+  return `${day}/${month}/${year}`;
+};
+//Fix sorting bug passing the entire acc tio the function and creating an object passing dates
 const displayMovements = function (acc, sort = false) {
   containerMovements.innerHTML = '';
 
-  const movs = sort
-    ? acc.movements.slice().sort((a, b) => a - b)
-    : acc.movements;
+  //We build a object using map , passing the movements and their date
+  //we need to wrap the object in the parentesis!!
+  const combinedMovsdates = acc.movements.map((mov, i) => ({
+    movement: mov,
+    movementDate: acc.movementsDates.at(i),
+  }));
 
-  movs.forEach(function (mov, i) {
-    const type = mov > 0 ? 'deposit' : 'withdrawal';
-    const date = new Date(acc.movementsDates[i]);
-    const day = `${date.getDate()}`.padStart(2, 0);
-    const month = `${date.getMonth() + 1}`.padStart(2, 0);
-    const year = date.getFullYear();
+  console.log(combinedMovsdates);
 
-    const displayDate = `${day}/${month}/${year}`;
+  //Se sorted e vero allora ordina i combined
+  if (sorted) combinedMovsdates.sort((a, b) => a.movement - b.movement);
+
+  // const movs = sort
+  //   ? acc.movements.slice().sort((a, b) => a - b)
+  //   : acc.movements;
+
+  //Per ogni movimento
+  combinedMovsdates.forEach(function (obj, i) {
+    //Destructuring object
+    const { movement, movementDate } = obj;
+    const type = movement > 0 ? 'deposit' : 'withdrawal';
+    const date = new Date(movementDate);
+
+    const displayDate = formatMovementDate(date);
 
     const html = `
       <div class="movements__row">
@@ -105,7 +130,7 @@ const displayMovements = function (acc, sort = false) {
       } ${type}</div>
       
       <div class="movements__date">${displayDate}</div>
-        <div class="movements__value">${mov.toFixed(2)}€</div>
+        <div class="movements__value">${movement.toFixed(2)}€</div>
 
       </div>
     `;
@@ -461,3 +486,15 @@ const now = new Date();
 // //Sets
 // future.setFullYear(2040);
 // console.log(future);
+
+//Operations with dates
+const future = new Date(2037, 10, 19, 15, 23);
+console.log(future);
+
+const daysPAssed = (date1, date2) =>
+  Math.abs((date2 - date1) / (1000 * 60 * 60 * 24));
+
+const days1 = daysPAssed(new Date(2037, 3, 14), new Date(2037, 3, 24));
+
+//Now we need to convert the number
+console.log(days1);
