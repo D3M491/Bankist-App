@@ -21,9 +21,9 @@ const account1 = {
     '2020-01-28T09:15:04.904Z',
     '2020-04-01T10:17:24.185Z',
     '2020-05-08T14:11:59.604Z',
-    '2020-05-27T17:01:17.194Z',
-    '2020-07-11T23:36:17.929Z',
-    '2020-07-12T10:51:36.790Z',
+    '2026-04-27T17:01:17.194Z',
+    '2026-04-28T23:36:17.929Z',
+    '2026-05-02T10:51:36.790Z',
   ],
   currency: 'EUR',
   locale: 'pt-PT', // de-DE
@@ -81,17 +81,27 @@ const inputClosePin = document.querySelector('.form__input--pin');
 /////////////////////////////////////////////////
 // Functions
 
-const formatMovementDate = function (date) {
-  const daysPAssed = (date1, date2) =>
-    Math.abs((date2 - date1) / (1000 * 60 * 60 * 24));
+//Separated function for formatting dates to day/month/year
+const formatMovementDate = function (date, locale) {
+  const calcDaysPassed = (date1, date2) =>
+    Math.round(Math.abs((date2 - date1) / (1000 * 60 * 60 * 24)));
 
-  const dayPassed = daysPAssed(new Date(), date);
+  const dayPassed = calcDaysPassed(new Date(), date);
   console.log(dayPassed);
-  const day = `${date.getDate()}`.padStart(2, 0);
-  const month = `${date.getMonth() + 1}`.padStart(2, 0);
-  const year = date.getFullYear();
 
-  return `${day}/${month}/${year}`;
+  if (dayPassed === 0) return 'Today';
+  if (dayPassed === 1) return 'Yesterday';
+  if (dayPassed <= 7) return `${dayPassed} days ago`;
+  //Only then we return the actual date
+  else {
+    //We add the locale argument to the function , then when we call it we pass it the local of the curr account . Then the locale is formatted passing the date
+    return new Intl.DateTimeFormat(locale).format(date);
+    // const day = `${date.getDate()}`.padStart(2, 0);
+    // const month = `${date.getMonth() + 1}`.padStart(2, 0);
+    // const year = date.getFullYear();
+
+    // return `${day}/${month}/${year}`;
+  }
 };
 //Fix sorting bug passing the entire acc tio the function and creating an object passing dates
 const displayMovements = function (acc, sort = false) {
@@ -106,9 +116,10 @@ const displayMovements = function (acc, sort = false) {
 
   console.log(combinedMovsdates);
 
-  //Se sorted e vero allora ordina i combined
-  if (sorted) combinedMovsdates.sort((a, b) => a.movement - b.movement);
+  //Se sorted e vero allora ordina i combinedMov
+  if (sort) combinedMovsdates.sort((a, b) => a.movement - b.movement);
 
+  //Old way
   // const movs = sort
   //   ? acc.movements.slice().sort((a, b) => a - b)
   //   : acc.movements;
@@ -119,8 +130,8 @@ const displayMovements = function (acc, sort = false) {
     const { movement, movementDate } = obj;
     const type = movement > 0 ? 'deposit' : 'withdrawal';
     const date = new Date(movementDate);
-
-    const displayDate = formatMovementDate(date);
+const formattedMovement = new Intl.NumberFormat(acc.locale , {style="currency", currency : "USD"})
+    const displayDate = formatMovementDate(date, acc.locale);
 
     const html = `
       <div class="movements__row">
@@ -208,16 +219,37 @@ btnLogin.addEventListener('click', function (e) {
     }`;
     containerApp.style.opacity = 100;
 
-    //Create current date and time
-    //We want this format = day , month and year
-    //We need to pad start on a string so we use template literal
-    const day = `${now.getDate()}`.padStart(2, 0);
-    const month = `${now.getMonth() + 1}`.padStart(2, 0);
-    const year = now.getFullYear();
-    const hours = now.getHours();
-    const minutes = `${now.getMinutes()}`.padStart(2, 0);
+    //Expermimenting with api
+    const now = new Date();
+    //Options object
+    const options = {
+      hour: 'numeric',
+      minute: 'numeric',
+      day: 'numeric',
+      month: 'numeric',
+      year: 'numeric',
+    };
 
-    labelDate.textContent = `${day}/${month}/${year}, ${hours}:${minutes}`;
+    // const locale = navigator.language;
+    // console.log(locale);
+
+    //Internationalization using Intl + date time format . We pass a string containing the language and the country . On it we call the format function passing the date
+
+    labelDate.textContent = new Intl.DateTimeFormat(
+      currentAccount.locale,
+      options,
+    ).format(now);
+
+    // //Create current date and time
+    // //We want this format = day , month and year
+    // //We need to pad start on a string so we use template literal
+    // const day = `${now.getDate()}`.padStart(2, 0);
+    // const month = `${now.getMonth() + 1}`.padStart(2, 0);
+    // const year = now.getFullYear();
+    // const hours = now.getHours();
+    // const minutes = `${now.getMinutes()}`.padStart(2, 0);
+
+    // labelDate.textContent = `${day}/${month}/${year}, ${hours}:${minutes}`;
 
     // Clear input fields
     inputLoginUsername.value = inputLoginPin.value = '';
@@ -307,8 +339,6 @@ btnSort.addEventListener('click', function (e) {
 currentAccount = account1;
 updateUI(currentAccount);
 containerApp.style.opacity = 1;
-
-const now = new Date();
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
@@ -498,3 +528,14 @@ const days1 = daysPAssed(new Date(2037, 3, 14), new Date(2037, 3, 24));
 
 //Now we need to convert the number
 console.log(days1);
+
+const options = {
+  style: 'currency',
+  // unit: 'kilometer-per-second ',
+  currency: 'EUR',
+  useGrouping: false, //With this we get rid of separators
+};
+//Internationalizating numbers
+const num = 3884764.23;
+
+console.log(new Intl.NumberFormat('it-IT', options).format(num));
