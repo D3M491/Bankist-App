@@ -103,6 +103,15 @@ const formatMovementDate = function (date, locale) {
     // return `${day}/${month}/${year}`;
   }
 };
+
+//Passing all values so the function is reusable
+const formatCur = function (value, locale, currency) {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: currency,
+  }).format(value);
+};
+
 //Fix sorting bug passing the entire acc tio the function and creating an object passing dates
 const displayMovements = function (acc, sort = false) {
   containerMovements.innerHTML = '';
@@ -130,7 +139,7 @@ const displayMovements = function (acc, sort = false) {
     const { movement, movementDate } = obj;
     const type = movement > 0 ? 'deposit' : 'withdrawal';
     const date = new Date(movementDate);
-const formattedMovement = new Intl.NumberFormat(acc.locale , {style="currency", currency : "USD"})
+    const formattedMovement = formatCur(obj.movement, acc.locale, acc.currency);
     const displayDate = formatMovementDate(date, acc.locale);
 
     const html = `
@@ -141,7 +150,7 @@ const formattedMovement = new Intl.NumberFormat(acc.locale , {style="currency", 
       } ${type}</div>
       
       <div class="movements__date">${displayDate}</div>
-        <div class="movements__value">${movement.toFixed(2)}€</div>
+        <div class="movements__value">${formattedMovement}</div>
 
       </div>
     `;
@@ -150,22 +159,26 @@ const formattedMovement = new Intl.NumberFormat(acc.locale , {style="currency", 
   });
 };
 
+//Balance calculations
 const calcDisplayBalance = function (acc) {
   acc.balance = acc.movements.reduce((acc, mov) => acc + mov, 0);
-  labelBalance.textContent = `${acc.balance.toFixed(2)}€`;
+  labelBalance.textContent = `${formatCur(acc.balance, acc.locale, acc.currency)}`;
 };
 
+//Incomes calculations
 const calcDisplaySummary = function (acc) {
   const incomes = acc.movements
     .filter(mov => mov > 0)
     .reduce((acc, mov) => acc + mov, 0);
-  labelSumIn.textContent = `${incomes.toFixed(2)}€`;
+  labelSumIn.textContent = `${formatCur(incomes, acc.locale, acc.currency)}`;
 
+  //Outcomes calculations
   const out = acc.movements
     .filter(mov => mov < 0)
     .reduce((acc, mov) => acc + mov, 0);
-  labelSumOut.textContent = `${Math.abs(out.toFixed(2))}€`;
+  labelSumOut.textContent = `${formatCur(Math.abs(out), acc.locale, acc.currency)}`;
 
+  //Interest calculations
   const interest = acc.movements
     .filter(mov => mov > 0)
     .map(deposit => (deposit * acc.interestRate) / 100)
@@ -174,7 +187,7 @@ const calcDisplaySummary = function (acc) {
       return int >= 1;
     })
     .reduce((acc, int) => acc + int, 0);
-  labelSumInterest.textContent = `${interest.toFixed(2)}€`;
+  labelSumInterest.textContent = `${formatCur(interest, acc.locale, acc.currency)}`;
 };
 
 const createUsernames = function (acc) {
@@ -197,6 +210,31 @@ const updateUI = function (acc) {
 
   // Display summary
   calcDisplaySummary(acc);
+};
+
+const startLogoutTimer = function () {
+  const tick = function () {
+    const min = String(Math.trunc(time / 60)).padStart(2, 0);
+    //sec are the remaining time from the previous operation
+    const sec = String(time % 60).padStart(2, 0);
+    //On each call print remaining time
+    labelTimer.textContent = `${min}:${sec}`;
+    //Decrease 1s
+    time--;
+    if (time === 0) {
+      clearInterval(timer);
+      labelWelcome.textContent = `Login to get started`;
+      containerApp.style.opacity = 0;
+    }
+  };
+  //Setting time to 5mins in seconds ( now using 100 to test)
+  let time = 10;
+
+  //Call the timer every sec
+  //BUG , after ending , the time we login again , the timer will take some time to restart , this is the solution : calling it immediately then passin it to the set interval
+  tick();
+  const timer = setInterval(tick, 1000);
+  //When 0s , stop timer and logout
 };
 
 ///////////////////////////////////////
@@ -240,7 +278,7 @@ btnLogin.addEventListener('click', function (e) {
       options,
     ).format(now);
 
-    // //Create current date and time
+    // //Create current date and time old way
     // //We want this format = day , month and year
     // //We need to pad start on a string so we use template literal
     // const day = `${now.getDate()}`.padStart(2, 0);
@@ -254,6 +292,8 @@ btnLogin.addEventListener('click', function (e) {
     // Clear input fields
     inputLoginUsername.value = inputLoginPin.value = '';
     inputLoginPin.blur();
+
+    startLogoutTimer();
 
     // Update UI
     updateUI(currentAccount);
@@ -293,16 +333,18 @@ btnLoan.addEventListener('click', function (e) {
   const amount = Math.round(inputLoanAmount.value);
 
   if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
-    // Add movement
-    currentAccount.movements.push(amount);
+    setTimeout(function () {
+      // Add movement
+      currentAccount.movements.push(amount);
 
-    //Add loan date . We use to iso because its the same format as movementDates
-    currentAccount.movementsDates.push(new Date().toISOString());
+      //Add loan date . We use to iso because its the same format as movementDates
+      currentAccount.movementsDates.push(new Date().toISOString());
 
-    // Update UI
-    updateUI(currentAccount);
+      // Update UI
+      updateUI(currentAccount);
+    }, 2500);
+    inputLoanAmount.value = '';
   }
-  inputLoanAmount.value = '';
 });
 
 btnClose.addEventListener('click', function (e) {
@@ -336,9 +378,9 @@ btnSort.addEventListener('click', function (e) {
 });
 
 //Fake always login
-currentAccount = account1;
-updateUI(currentAccount);
-containerApp.style.opacity = 1;
+// currentAccount = account1;
+// updateUI(currentAccount);
+// containerApp.style.opacity = 1;
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
@@ -539,3 +581,42 @@ const options = {
 const num = 3884764.23;
 
 console.log(new Intl.NumberFormat('it-IT', options).format(num));
+
+//#region SET TIMEOUT//////////////////
+//When the timer ends the execution start working but it don't stop!!
+setTimeout(
+  (ing1, ing2) => console.log(`here is your pizza with ${ing1} and ${ing2}`),
+  5000,
+  //We can pass arguments after the timer set
+  'olives',
+  'spinach',
+);
+
+console.log('Waiting');
+
+//I can clear the timer before it ends using a condition
+const ingredients = ['olives ', 'broccoli'];
+
+const pizzaTimer = setTimeout(
+  (ing1, ing2) => console.log(`here is your pizza with ${ing1}and ${ing2}`),
+  5000,
+  //We can pass arguments after the timer set
+  ...ingredients,
+);
+
+if (ingredients.includes('spinach')) clearTimeout(pizzaTimer);
+//#endregion SET TIMEOUT//////////////////
+
+//#region SET INTERVAL
+//We can call the function multiple times on a timer
+// setInterval(function () {
+//   const options = {
+//     hour: 'numeric',
+//     minute: 'numeric',
+//     second: 'numeric',
+//   };
+//   const now = new Intl.DateTimeFormat('it-IT', options).format(new Date());
+
+//   console.log(now);
+// }, 1000);
+//#endregion SET INTERVAL
