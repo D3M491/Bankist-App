@@ -219,27 +219,29 @@ const startLogoutTimer = function () {
     const sec = String(time % 60).padStart(2, 0);
     //On each call print remaining time
     labelTimer.textContent = `${min}:${sec}`;
-    //Decrease 1s
-    time--;
+    //When 0s , stop timer and logout
     if (time === 0) {
       clearInterval(timer);
       labelWelcome.textContent = `Login to get started`;
       containerApp.style.opacity = 0;
     }
+    //Decrease 1s
+    time--;
   };
   //Setting time to 5mins in seconds ( now using 100 to test)
-  let time = 10;
+  let time = 120;
 
   //Call the timer every sec
   //BUG , after ending , the time we login again , the timer will take some time to restart , this is the solution : calling it immediately then passin it to the set interval
   tick();
   const timer = setInterval(tick, 1000);
-  //When 0s , stop timer and logout
+  //Return so the execution ends
+  return timer;
 };
 
 ///////////////////////////////////////
 // Event handlers
-let currentAccount;
+let currentAccount, timer;
 
 btnLogin.addEventListener('click', function (e) {
   // Prevent form from submitting
@@ -292,8 +294,10 @@ btnLogin.addEventListener('click', function (e) {
     // Clear input fields
     inputLoginUsername.value = inputLoginPin.value = '';
     inputLoginPin.blur();
-
-    startLogoutTimer();
+    //First we need to check if there's an existing timer running
+    if (timer) clearInterval(timer);
+    //Setting timer as new
+    timer = startLogoutTimer();
 
     // Update UI
     updateUI(currentAccount);
@@ -324,6 +328,10 @@ btnTransfer.addEventListener('click', function (e) {
 
     // Update UI
     updateUI(currentAccount);
+
+    //Resetting timer
+    clearInterval(timer);
+    timer = startLogoutTimer();
   }
 });
 
@@ -342,6 +350,9 @@ btnLoan.addEventListener('click', function (e) {
 
       // Update UI
       updateUI(currentAccount);
+      //Resetting timer
+      clearInterval(timer);
+      timer = startLogoutTimer();
     }, 2500);
     inputLoanAmount.value = '';
   }
