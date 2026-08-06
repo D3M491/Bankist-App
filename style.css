@@ -22,6 +22,7 @@ nav {
   justify-content: space-between;
   align-items: center;
   padding: 0 2rem;
+  gap: 2rem;
 }
 
 .welcome {
@@ -35,6 +36,7 @@ nav {
 
 .login {
   display: flex;
+  margin-left: auto;
 }
 
 .login__input {
@@ -62,11 +64,14 @@ nav {
 
 .login__btn {
   border: none;
-  background: none;
+  background: #39b385;
   font-size: 2.2rem;
-  color: inherit;
+  color: white;
   cursor: pointer;
   transition: all 0.3s;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 5px;
 }
 
 .login__btn:hover,
@@ -79,14 +84,15 @@ nav {
 
 .logout__btn {
   border: none;
+  border-radius: 5px;
   width: 3rem;
   height: 3rem;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: end;
   background: #e52a5a;
   font-size: 2.5rem;
-  color: #ccc;
+  color: white;
   cursor: pointer;
   transition: all 0.3s;
   opacity: 0;
@@ -271,10 +277,12 @@ h2 {
   color: #333;
 }
 
+/* todo allineare login bottone verticalmente  */
 .form {
   display: grid;
   grid-template-columns: 2.5fr 2.5fr 1fr;
   grid-template-rows: auto auto;
+
   gap: 0.4rem 1rem;
 }
 
@@ -355,9 +363,6 @@ footer {
     gap: 1rem;
   }
   .welcome {
-    /* position: absolute;
-    left: 0;
-    top: 10rem; */
   }
 
   .login {
