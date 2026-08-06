@@ -61,12 +61,14 @@ const containerMovements = document.querySelector('.movements');
 
 // Buttons
 const btnLogin = document.querySelector('.login__btn');
+const btnLogout = document.querySelector('.logout__btn');
 const btnTransfer = document.querySelector('.form__btn--transfer');
 const btnLoan = document.querySelector('.form__btn--loan');
 const btnClose = document.querySelector('.form__btn--close');
 const btnSort = document.querySelector('.btn--sort');
 
 // Inputs
+const loginForm = document.querySelector('.login');
 const inputLoginUsername = document.querySelector('.login__input--user');
 const inputLoginPin = document.querySelector('.login__input--pin');
 const inputTransferTo = document.querySelector('.form__input--to');
@@ -212,8 +214,13 @@ btnLogin.addEventListener('click', function (e) {
       currentAccount.owner.split(' ')[0]
     }`;
 
+    //Hiding login and credentials
     credentials.style.opacity = 0;
+    loginForm.style.opacity = 0;
+
+    //Show app and btn for logout
     containerApp.style.opacity = 100;
+    btnLogout.style.opacity = 1;
 
     const now = new Date();
     const options = {
@@ -238,6 +245,15 @@ btnLogin.addEventListener('click', function (e) {
 
     updateUI(currentAccount);
   }
+});
+
+btnLogout.addEventListener('click', function (e) {
+  e.preventDefault();
+  labelWelcome.textContent = `Login to get started`;
+  credentials.style.opacity = 1;
+  containerApp.style.opacity = 0;
+  loginForm.style.opacity = 1;
+  btnLogout.style.opacity = 0;
 });
 
 btnTransfer.addEventListener('click', function (e) {

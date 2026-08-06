@@ -77,6 +77,21 @@ nav {
   color: #777;
 }
 
+.logout__btn {
+  border: none;
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #e52a5a;
+  font-size: 2.5rem;
+  color: #ccc;
+  cursor: pointer;
+  transition: all 0.3s;
+  opacity: 0;
+}
+
 /* CREDENTIALS */
 .credentials {
   position: absolute;
@@ -322,7 +337,41 @@ h2 {
 
 footer {
   position: absolute;
-  bottom: 5%;
+  bottom: 2%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Phone media */
+@media (max-width: 600px) {
+  nav {
+    padding: 0;
+    position: relative;
+    gap: 1rem;
+  }
+  .welcome {
+    /* position: absolute;
+    left: 0;
+    top: 10rem; */
+  }
+
+  .login {
+    margin-left: auto;
+    position: absolute;
+    top: 10rem;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 100;
+    opacity: 1;
+  }
+
+  .login__input {
+    padding: 0;
+    width: 5rem;
+  }
 }
