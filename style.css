@@ -143,6 +143,7 @@ td {
   gap: 2rem;
   /* opacity: 0; */
   transition: all 1s;
+  /* height: 100%; */
 }
 
 .balance {
@@ -181,7 +182,7 @@ td {
   padding: 2.25rem 4rem;
   display: flex;
   align-items: center;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .movements__type {
@@ -216,6 +217,7 @@ td {
 
 /* SUMMARY */
 .summary {
+  grid-column: 1/-1;
   grid-row: 5 / 6;
   display: flex;
   align-items: baseline;
@@ -245,7 +247,7 @@ td {
 }
 
 .btn--sort {
-  margin-left: auto;
+  margin-right: auto;
   border: none;
   background: none;
   font-size: 1.3rem;
@@ -335,9 +337,12 @@ form {
 
 .logout-timer {
   padding: 0 0.3rem;
-  margin-top: 1.9rem;
   text-align: right;
   font-size: 1.25rem;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 5rem;
 }
 
 .timer {
@@ -346,9 +351,9 @@ form {
 
 footer {
   position: absolute;
-  bottom: 2%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  top: 100%;
+  left: 0;
+  margin-top: 5rem;
 }
 
 .hidden {
@@ -369,7 +374,6 @@ footer {
   .app {
     max-width: 100rem;
     margin: 4rem auto;
-
     grid-template-columns: minmax(50%, 1fr) 3fr;
     grid-template-rows: auto repeat(3, 15rem) auto;
   }
@@ -400,29 +404,24 @@ footer {
     margin-right: auto;
     margin-left: 0;
   }
-
-  .logout-timer {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    margin-top: 3rem;
-  }
-
-  footer {
-    position: absolute;
-    top: 100%;
-    left: 12%;
-    margin-top: 3rem;
-  }
 }
 
 /* Phone media */
 @media (max-width: 600px) {
+  .app {
+    grid-template-columns: minmax(50%, 1fr);
+  }
+
+  .balance {
+    grid-column: 1/-1;
+  }
+
   nav {
     padding: 0;
     position: relative;
     gap: 1rem;
   }
+
   .welcome {
   }
 
@@ -440,5 +439,11 @@ footer {
     padding: 0;
     width: 5rem;
     height: 3.5rem;
+  }
+
+  .summary {
+    grid-row: 9/10;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
   }
 }
