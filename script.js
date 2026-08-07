@@ -119,9 +119,7 @@ const displayMovements = function (acc, sort = false) {
     const html = `
       <div class="movements__row">
 
-      <div class="movements__type movements__type--${type}">${
-        i + 1
-      } ${type}</div>
+      <div class="movements__type movements__type--${type}"> ${type}</div>
 
       <div class="movements__date">${displayDate}</div>
         <div class="movements__value">${formattedMovement}</div>
@@ -198,6 +196,20 @@ const startLogoutTimer = function () {
   return timer;
 };
 
+const renderErrorMsg = function () {
+  const errorMsg = document.querySelector('.error__msg');
+
+  if (errorMsg) {
+    errorMsg.remove();
+  }
+
+  loginForm.insertAdjacentHTML(
+    'beforeend',
+
+    `<p class="error__msg">Can't find an account with that credentials</p>`,
+  );
+};
+
 ///////////////////////////////////////
 // Event handlers
 let currentAccount, timer;
@@ -209,6 +221,7 @@ btnLogin.addEventListener('click', function (e) {
     acc => acc.username === inputLoginUsername.value,
   );
 
+  //If account matches
   if (currentAccount?.pin === +inputLoginPin.value) {
     labelWelcome.textContent = `Welcome back, ${
       currentAccount.owner.split(' ')[0]
@@ -244,6 +257,9 @@ btnLogin.addEventListener('click', function (e) {
     timer = startLogoutTimer();
 
     updateUI(currentAccount);
+  } else {
+    //Display error in case of wrong credentials
+    renderErrorMsg();
   }
 });
 
@@ -326,4 +342,9 @@ btnSort.addEventListener('click', function (e) {
   e.preventDefault();
   displayMovements(currentAccount, !sorted);
   sorted = !sorted;
+  if (sorted) {
+    btnSort.querySelector('span').innerHTML = '&uparrow;';
+  } else {
+    btnSort.querySelector('span').innerHTML = '&downarrow;';
+  }
 });
