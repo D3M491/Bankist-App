@@ -65,8 +65,7 @@ const btnLogout = document.querySelector('.logout__btn');
 const btnTransfer = document.querySelector('.form__btn--transfer');
 const btnLoan = document.querySelector('.form__btn--loan');
 const btnClose = document.querySelector('.form__btn--close');
-const btnSort = document.querySelector('.btn--sort');
-
+let btnSort;
 // Inputs
 const loginForm = document.querySelector('.login');
 const inputLoginUsername = document.querySelector('.login__input--user');
@@ -78,7 +77,6 @@ const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
 // Functions
-
 const formatMovementDate = function (date, locale) {
   const calcDaysPassed = (date1, date2) =>
     Math.round(Math.abs((date2 - date1) / (1000 * 60 * 60 * 24)));
@@ -129,6 +127,15 @@ const displayMovements = function (acc, sort = false) {
 
     containerMovements.insertAdjacentHTML('afterbegin', html);
   });
+
+  containerMovements.insertAdjacentHTML(
+    'afterbegin',
+    `
+      <button class="btn--sort"><span>&downarrow;</span> SORT</button>
+    `,
+  );
+
+  btnSort = document.querySelector('.btn--sort');
 };
 
 const calcDisplayBalance = function (acc) {
@@ -183,7 +190,12 @@ const startLogoutTimer = function () {
     if (time === 0) {
       clearInterval(timer);
       labelWelcome.textContent = `Login to get started`;
+      credentials.style.opacity = 1;
       containerApp.style.opacity = 0;
+      containerApp.style.display = 'none';
+      loginForm.style.opacity = 1;
+      btnLogout.style.opacity = 0;
+      btnLogout.style.display = 'none';
     }
     time--;
   };
@@ -233,7 +245,10 @@ btnLogin.addEventListener('click', function (e) {
 
     //Show app and btn for logout
     containerApp.style.opacity = 100;
+    containerApp.style.display = 'grid';
+
     btnLogout.style.opacity = 1;
+    btnLogout.style.display = 'flex';
 
     const now = new Date();
     const options = {
@@ -263,13 +278,31 @@ btnLogin.addEventListener('click', function (e) {
   }
 });
 
+//Todo problem on btnSort . The button is created on displayMovements but i can't access it instantly for an event listener
+let sorted = false;
+
+console.log(btnSort); //null or undefined
+btnSort?.addEventListener('click', function (e) {
+  e.preventDefault();
+  displayMovements(currentAccount, !sorted);
+  sorted = !sorted;
+  if (sorted) {
+    btnSort.querySelector('span').innerHTML = '&uparrow;';
+  } else {
+    btnSort.querySelector('span').innerHTML = '&downarrow;';
+  }
+});
+
 btnLogout.addEventListener('click', function (e) {
   e.preventDefault();
   labelWelcome.textContent = `Login to get started`;
   credentials.style.opacity = 1;
   containerApp.style.opacity = 0;
+  containerApp.style.display = 'none';
+
   loginForm.style.opacity = 1;
   btnLogout.style.opacity = 0;
+  btnLogout.style.display = 'none';
 });
 
 btnTransfer.addEventListener('click', function (e) {
@@ -335,16 +368,4 @@ btnClose.addEventListener('click', function (e) {
   }
 
   inputCloseUsername.value = inputClosePin.value = '';
-});
-
-let sorted = false;
-btnSort.addEventListener('click', function (e) {
-  e.preventDefault();
-  displayMovements(currentAccount, !sorted);
-  sorted = !sorted;
-  if (sorted) {
-    btnSort.querySelector('span').innerHTML = '&uparrow;';
-  } else {
-    btnSort.querySelector('span').innerHTML = '&downarrow;';
-  }
 });

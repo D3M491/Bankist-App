@@ -25,9 +25,8 @@
           placeholder="user"
           class="login__input login__input--user"
         />
-        <!-- In practice, use type="password" -->
         <input
-          type="text"
+          type="password"
           placeholder="PIN"
           maxlength="4"
           class="login__input login__input--pin"
@@ -37,6 +36,7 @@
       <button class="logout__btn">&#8626;</button>
     </nav>
 
+    <!-- CREDDENTIALS FOR TESTING -->
     <div class="credentials">
       <p class="credentials__p">Demo credentials for testing :</p>
       <table>
@@ -75,7 +75,6 @@
       </div>
 
       <!-- MOVEMENTS -->
-
       <div class="movements">
         <div class="movements__row">
           <div class="movements__type movements__type--deposit">2 deposit</div>
@@ -93,16 +92,15 @@
 
       <!-- SUMMARY -->
       <div class="summary">
-        <button class="btn--sort"><span>&downarrow;</span> SORT</button>
-        <div>
+        <div class="summary__in">
           <p class="summary__label">In</p>
           <p class="summary__value summary__value--in">0000€</p>
         </div>
-        <div>
+        <div class="summary__out">
           <p class="summary__label">Out</p>
           <p class="summary__value summary__value--out">0000€</p>
         </div>
-        <div>
+        <div class="summary__interest">
           <p class="summary__label">Interest</p>
           <p class="summary__value summary__value--interest">0000€</p>
         </div>
