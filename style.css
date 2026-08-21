@@ -300,11 +300,20 @@ form {
 
 /* Exceptions for interest */
 .form.form--loan {
-  grid-template-columns: 2.5fr 1fr 2.5fr;
+  grid-template-columns: 2.5fr 2.5fr 1fr;
 }
 .form__label--loan {
   grid-row: 2;
 }
+
+.form__input--loan-amount {
+  grid-column: 1/3;
+}
+
+.form__btn--loan {
+  grid-column: 3/4;
+}
+
 /* End exceptions */
 
 .form__input {
@@ -505,6 +514,10 @@ footer {
   }
 
   @media (max-width: 300px) {
+    .welcome {
+      font-size: 1.4rem;
+      font-weight: 500;
+    }
     .balance {
       display: flex;
       flex-direction: column;

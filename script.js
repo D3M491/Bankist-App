@@ -278,21 +278,22 @@ btnLogin.addEventListener('click', function (e) {
   }
 });
 
-//Todo problem on btnSort . The button is created on displayMovements but i can't access it instantly for an event listener
 let sorted = false;
 
-console.log(btnSort); //null or undefined
-btnSort?.addEventListener('click', function (e) {
+//Event delegation for sort btn
+containerMovements.addEventListener('click', function (e) {
   e.preventDefault();
-  displayMovements(currentAccount, !sorted);
+  if (!e.target.closest('.btn--sort')) return;
   sorted = !sorted;
-  if (sorted) {
-    btnSort.querySelector('span').innerHTML = '&uparrow;';
-  } else {
-    btnSort.querySelector('span').innerHTML = '&downarrow;';
-  }
+  displayMovements(currentAccount, sorted);
+
+  //Inverting arrow
+  btnSort.querySelector('span').innerHTML = sorted
+    ? '&uparrow;'
+    : '&downarrow;';
 });
 
+//Logout event
 btnLogout.addEventListener('click', function (e) {
   e.preventDefault();
   labelWelcome.textContent = `Login to get started`;
